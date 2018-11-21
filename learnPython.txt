@@ -1,0 +1,73 @@
+1.列表生成式
+    列表生成式即List Comprehensions，是Python内置的非常简单却强大的可以用来创建list的生成式
+    示例：生成[1,2,3...10]
+    list(range(1,11))
+    示例2：生成[1X1,2X2,...10X10]
+    [x*x for x in range(1,11)]
+    或者
+        L=[]
+        for x in range(1,11):
+            L.append(x*x)
+        L
+    for循环后面还可以加上if判断，这样我们就可以筛选出仅偶数的平方
+        示例：生成偶数平方
+    运用列表生成式，可以写出非常简洁的代码。例如，列出当前目录下的所有文件和目录名，可以通过一行代码实现。
+        示例：显示当前目录下的所有文件和目录名
+        import os #需要导入OS模块
+        [d for d in os.listdir('.')]  os.listdir可以列出当前目录
+    for循环其实可以同时使用两个甚至多个变量，比如dict的items()可以同时迭代key和value
+        示例：d={'x':'A','y':'B','z':'C'}
+        for k,v in d.items():
+            print(k,'=',v)
+    列表生成式也可以使用两个变量来生成list
+        >>> d = {'x': 'A', 'y': 'B', 'z': 'C' }
+        >>> [k+'='+v for k,v in d.items()]
+            ['y=B', 'x=A', 'z=C']
+    把list中所有字符串变成小写
+         L = [', 'World', 'IBM', 'Apple']
+         [s.lower() for s in L]
+    示例：生成一个List其中包含整数与字符串，如果字符串中包含大写字母则将其转换成为小写，若为数字则忽略
+         L = ['Hello', 'World', 18, 'Apple', None]
+         [s.lower() for s in L if isinstance(s,str)]  #通过isinstance判断获取的内容是否为字符串
+    方法一只会对字符串进行操作，对非字符串不做处理也不会输出
+         [s.lower() if isinstance(s,str) else s for s in L]
+    方法二，先判断是否为字符串，为字符串则处理，非字符串则将原数值输出
+
+
+2.生成器
+    通过列表生成式，我们可以直接创建一个列表。但是，受到内存限制，列表容量肯定是有限的。而且，创建一个包含100万个元素的列表，不仅占用很大的存储空间，如果我们仅仅需要访问前面几个元素，那后面绝大多数元素占用的空间都白白浪费了。
+
+    所以，如果列表元素可以按照某种算法推算出来，那我们是否可以在循环的过程中不断推算出后续的元素呢？这样就不必创建完整的list，从而节省大量的空间。在Python中，这种一边循环一边计算的机制，称为生成器：generator。
+
+    要创建一个generator，有很多种方法。第一种方法很简单，只要把一个列表生成式的[]改成()，就创建了一个generator：
+    创建L和g的区别仅在于最外层的[]和()，L是一个list，而g是一个generator。
+
+    我们可以直接打印出list的每一个元素，但我们怎么打印出generator的每一个元素呢？
+
+    如果要一个一个打印出来，可以通过next()函数获得generator的下一个返回值
+    示例：
+        g=(x*x for x in range(1,11))
+        for n in g:
+            print(n)
+     示例：生成斐波那契数列数列
+        #!/usr/bin/python
+        #-*-coding utf-8
+        def fib(max):
+            n,a,b=0,0,1     #此赋值语句相当于t=(0,0,1)，n=t[0] a=t[1] b=t[2]
+            while n < max:
+                print(b)
+                a,b=b,a+b   #此赋值语句相当于t=(b,a+b)，a=t[0] b=t[1]
+                n=n+1
+            return 'Done'
+    上面的函数和generator仅一步之遥，要把fib函数编程generator，只需要把print(b)改为yield b即可。
+    示例：使用generator实现斐波那切数列
+        #!/usr/bin/python
+        #-*-coding utf-8
+        def fib(max):
+            n,a,b=0,0,1     #此赋值语句相当于t=(0,0,1)，n=t[0] a=t[1] b=t[2]
+            while n < max:
+                yield b
+                a,b=b,a+b   #此赋值语句相当于t=(b,a+b)，a=t[0] b=t[1]
+                n=n+1
+            return 'Done'
+
