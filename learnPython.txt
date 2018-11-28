@@ -135,4 +135,236 @@
             s2=list(map(int,[x for x in s[n+1:]]))
             return reduce(fn,s1) + reduce(fn,s2)/10**len(s2)
             print('123.4567=',str2float('123.4567'))
+4.filter函数
+    和map()类似，filter()也接收一个函数和一个序列。和map()不同的是，filter()把传入的函数依次作用于每个元素，然后根据返回值是True还是False决定保留还是丢弃该元素。
+    示例：在一个List中删掉偶数只保留奇数。
+    def testfilter(s):
+        def delOdd(n):
+            return n % 2==1
+        #list(filter(delOdd,[0,1,2,3,4,5,6,7,8]))
+        return list(filter(delOdd,s))
+    示例：删除序列当中空的字符串
+        def not_empty(s):
+            return s and s.strip()
+        list(filter(not_empty,['A', '', 'B', None, 'C', '  ']))
+    
+    示例:输出1000以内的所有素数
+        from math import sqrt
+        def is_prime(n):
+            if n == 1:
+                return False
+            for i in range(2, int(sqrt(n))+1):
+                if n % i == 0:
+                    return False
+            return True
+                                                             
+            count = 0
+            for i in range(1, 1000):
+                if is_prime(i):
+                    count = count + 1
+                    print('{}:{}'.format(count, i))
+    示例：利用filter()筛选出回数
+        def is_palindrome(n):
+            return str(n)==str(n)[::-1]  # 将获取到的n序列转换为字符串，str(n)[::-1]的作用是将n序列进行反转；最后返回相等的数值
+        print(list(filter(is_palindrome,range(1,1000))))
+        # filter处理过的数组是惰性序列，所以需要list
+5.sorted函数
+    Python内置的排序函数不仅可以对数字进行排序，亦可以对字符串进行排序，而且还支持自定义排序功能
+        示例：对数字和字符串list进行排序
+        sorted([1,20,10,-5,2])
+        sorted([1,20,10,-5,30],key=abs)  # 使用sorted自定义排序规则，先对其进行取绝对值后再进行排序
+        sorted(['bob', 'about', 'Zoo', 'Credit'])
+    默认情况下，对字符串排序，是按照ASCII的大小比较的，由于'Z' < 'a'，结果，大写字母Z会排在小写字母a的前面。
+    现在，我们提出排序应该忽略大小写，按照字母序排序。要实现这个算法，不必对现有代码大加改动，只要我们能用一个key函数把字符串映射为忽略大小写排序即可。忽略大小写来比较两个字符串，实际上就是先把字符串都变成大写（或者都变成小写），再比较。
+        sorted(['bob', 'about', 'Zoo', 'Credit'],key=str.lowerl)
+        要进行反向排序，不必改动key函数，可以传入第三个参数reverse=True：
+        sorted(['bob', 'about', 'Zoo', 'Credit'],key=str.lowerl,revese=True)
+        示例:通过sorted函数对学生成绩按姓名排序，第二是对学生成绩进行排序
+        #!/usr/bin/python
+        # -*-coding:utf-8 -*-
+        L = [('Bob', 75), ('Adam', 92), ('Bart', 66), ('Lisa', 88)]
+        def sortByName(t):
+            for name,score in t:
+                print(name)
+        def by_name(t):
+            return t[0].lower   # 获取学生姓名并对学生姓名忽略大小写
+        def by_score(t):
+            return t[1]  # 获取学生成绩
+        print(list(sorted(L,key=by_name)))  # 通过学生姓名进行排序
+        print(list(sorted(L,key=by_score))) # 通过学生成绩进行排序
+
+6. 闭包
+    在一个外函数中定义了一个内函数，内函数里运用了外函数的临时变量，并且外函数的返回值是内函数的引用。这样就构成了一个闭包。
+    一般情况下，在我们认知当中，如果一个函数结束，函数的内部所有东西都会释放掉，还给内存，局部变量都会消失。但是闭包是一种特殊情况，如果外函数在结束的时候发现有自己的临时变量将来会在内部函数中用到，就把这个临时变量绑定给了内部函数，然后自己再结束。
+    示例：
+    #!/usr/bin/python
+    # -*-coding:utf-8-*-
+    #
+    def testCount():
+        def f(j):
+            def g():
+                return j * j
+            return g
+        fs=[]
+        for i in range(1,4):
+            fs.append(f(i))
+        return fs
+    f1,f2,f3=count()  # 获取到的值为1,4,9
+    示例：利用闭包返回一个计数器函数，每次调用它返回递增整数。
+    def createCounter():
+        def f():
+            n=0
+            while True:
+                n=n+1
+                yield n
+            sun = f()
+        def counter():
+            return next(sun)
+         return counter
+7.匿名函数
+    匿名函数使用lambda来定义
+    示例：使用匿名函数来获取100以内所有的奇数
+        list(filter(lambda x: x % 2 == 1,range(1,100)))
+8. 装饰器(Decorator)
+    假设我们要增强now()函数的功能，比如，在函数调用前后自动打印日志，但又不希望修改now()函数的定义，这种在代码运行期间动态增加功能的方式，称之为“装饰器”（Decorator）。
+    示例：
+        def log(func):
+            def wrapper(*args, **kw):
+                print('call %s():' % func.__name__)
+                return func(*args, **kw)
+            return wrapper
+    
+9.模块
+    
+    示例:
+        #!/usr/bin/env python3
+        # -*- coding: utf-8 -*-
+
+        ' a test module '
+
+        __author__ = 'Michael Liao'
+
+        import sys
+
+        def test():
+            args = sys.argv
+            if len(args)==1:
+                print('Hello, world!')
+            elif len(args)==2:
+                print('Hello, %s!' % args[1])
+            else:
+                print('Too many arguments!')
+
+         if __name__=='__main__':  #当我们在命令行运行hello模块文件时，Python解释器把一个特殊变量__name__置为__main__，而如果在其他地方导入该hello模块时，if判断将失败，因此，这种if测试可以让一个模块通过命令行运行时执行一些额外的代码，最常见的就是运行测试。
+            test()
+
+10.python面向对象编程
+    1.特性
+      (1) 继承
+      在OOP程序设计中，当我们定义一个class的时候，可以从某个现有的class继承，新的class称为子类（Subclass），而被继承的class称为基类、父类或超类（Base class、Super class）。
+      示例：
+      class Animal(object):
+          def run(self):
+              print('Animal is running...')
+      class Dog(Animal):  # 定义Dog类继承Animal类
+          pass
+      dog=Dog()  # 将Dog类实例化为dog对象
+      dog.run()  # 直接使用父类的run方法来打印输出
+      (2) 多态
+          在继承关系中，如果一个实例的数据类型是某个子类，那它的数据类型也可以被看做是父类。但是，反过来就不行。
+          示例：
+          class Dog(Animal):
+              def run(self):
+                  print('Dog is running...')
+              def eat(self):
+                  print('Eating meat...')
+        dog=Dog()
+        ani=Animal()
+        isinstance(dog,Dog) -->True
+        isinstance(dog,Animal) -->True  #dog对象是Dog实例化得来，Dog也是继承自Animal父类，所以dog对象也是Animal类型也是正确的
+        isinstance(ani,Animal) -->Ture
+        isinstance(ani,Dog) -->False  #所有的子类对象都也是父类对象没有问题，但是所有的父类对象不一定都是子类对象。
+
+11.获取对象信息
+   (1) type('str')
+   (2) isinstance(dog,Animal)
+   (3) 如果要获得一个对象的所有属性和方法，可以使用dir()函数，它返回一个包含字符串的list，比如，获得一个str对象的所有属性和方法
+       示例：dir('ABC')
+       ['__add__', '__class__',..., '__subclasshook__', 'capitalize', 'casefold',..., 'zfill']
+       类似__xxx__的属性和方法在Python中都是有特殊用途的，比如__len__方法返回长度。在Python中，如果你调用len()函数试图获取一个对象的长度，实际上，在len()函数内部，它自动去调用该对象的__len__()方法
+   (4) 仅仅把属性和方法列出来是不够的，配合getattr()、setattr()以及hasattr()，我们可以直接操作一个对象的状态
+       class MyObject(object):
+       ...     def __init__(self):
+       ...         self.x = 9
+       ...     def power(self):
+       ...         return self.x * self.x
+       obj=Myobject()
+       hasattr(obj,'x') -->True
+       hasattr(obj,'y') -->False  # Myobject类中没有y属性所以返回false
+       setattr(obj,'y',20)  # 通过setattr方法为obj对象设置一个y属性并给y赋值
+       getattr(obj,'y')  # 获取y属性值
+       getattr(obj, 'z', 404) # 获取属性'z'，如果不存在，返回默认值404
+
+       也可以获得对象的方法：
+       hasattr(obj, 'power') # 有属性'power'吗？
+       True
+       >>> getattr(obj, 'power') # 获取属性'power'
+       <bound method MyObject.power of <__main__.MyObject object at 0x10077a6a0>>
+       >>> fn = getattr(obj, 'power') # 获取属性'power'并赋值到变量fn
+       >>> fn # fn指向obj.power
+       <bound method MyObject.power of <__main__.MyObject object at 0x10077a6a0>>
+       >>> fn() # 调用fn()与调用obj.power()是一样的
+    小结：通过内置的一系列函数，我们可以对任意一个Python对象进行剖析，拿到其内部的数据。要注意的是，只有在不知道对象信息的时候，我们才会去获取对象信息。如果可以直接写：
+    sum = obj.x + obj.y
+    就不要写：
+    sum = getattr(obj, 'x') + getattr(obj, 'y')
+    def readImage(fp):
+        if hasattr(fp, 'read'):
+            return readData(fp)
+        return None
+
+12. 面向对象高级编程
+    (1).正常情况下，当我们定义了一个class，创建了一个class的实例后，我们可以给该实例绑定任何属性和方法
+      示例：
+      class Student(object):
+          pass
+      s = Student()
+      s.name = 'Michael' # 动态给实例绑定一个属性
+      print(s.name) -->Michael
+      # 可以给实例绑定一个方法
+      def set_age(self,age):  # 定义一个函数作为实例方法
+          self.age = age
+      from types import MethodType
+      s.set_age=MethodType(set_age,s)  # 为实例绑定一个方法
+      s.set_age(25)  # 调用绑定的实例方法
+      s.age  # 测试结果
+      # 注意给一个实例绑定方法,对另一个实例不起作用,如果需要对所有实例起作用,可以将方法绑定在类上。
+      def set_score(self, score):
+          self.score = score
+      Student.set_age = set_score
+      如果我们想要限制实例的属性怎么办？比如，只允许对Student实例添加name和age属性。
+
+      为了达到限制的目的，Python允许在定义class的时候，定义一个特殊的__slots__变量，来限制该class实例能添加的属性
+      class Student(object):
+          __slots__ = ('name', 'age') # 用tuple定义允许绑定的属性名称
+      使用__slots__要注意，__slots__定义的属性仅对当前类实例起作用，对继承的子类是不起作用的
+      class GraduateStudent(Student):
+      ...     pass
+      ...
+      >>> g = GraduateStudent()
+      >>> g.score = 9999
+   (2).@property
+     对于类的方法，装饰器一样起作用。Python内置的@property装饰器就是负责把一个方法变成属性调用的。@property的实现比较复杂，我们先考察如何使用。把一个getter方法变成属性，只需要加上@property就可以了，此时，@property本身又创建了另一个装饰器@score.setter，负责把一个setter方法变成属性赋值，于是，我们就拥有一个可控的属性操作。
+     class Student(object):
+         @property
+         def score(self):
+             return self._score
+         @score.setter
+         def score(self, value):
+             if not isinstance(value, int):
+                 raise ValueError('score must be an integer!')
+             if value < 0 or value > 100:
+                 raise ValueError('score must between 0 ~ 100!')
+             self._score = value
+
 
